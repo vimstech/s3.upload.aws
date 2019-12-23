@@ -22,8 +22,8 @@ router.get('/', (request, response, next) => {
 
 router.post('/', upload.single('file'), (request, response, next) => {
   awsS3.uploadFile(request, response, request.file, (attachement, error) => {
-    console.log(error)
     if(error){
+      console.log(error)
       response.json(error)
     } else {
       response.json(attachement)

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const aws = require('aws-sdk');
-const s3Config = require('../config/s3').s3;
+const s3Config = require('../config/s3');
 
 const s3 = new aws.S3({
   accessKeyId: s3Config.S3_ACCESS_KEY_ID,
@@ -21,10 +21,11 @@ module.exports.uploadFile = (request, response, file, callback) => {
   s3.upload(options, (s3Err, data) => {
 
     fs.unlink(file.path, (err)=>{
-      if(err)
+      if(err){
         console.error(err)
-      else
+      }else{
         console.log('file upload.')
+      }
     });
 
     if(s3Err){
