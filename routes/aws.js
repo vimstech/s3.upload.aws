@@ -20,7 +20,7 @@ router.get('/', (request, response, next) => {
   response.render("aws/index")
 })
 
-router.get('/:objects', (request, response, next) => {
+router.get('/objects', (request, response, next) => {
   awsS3.getObjects((error, objects) => {
     response.json(objects)
   })
