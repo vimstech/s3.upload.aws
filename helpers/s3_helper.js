@@ -1,5 +1,6 @@
 const fs = require('fs');
 const aws = require('aws-sdk');
+const _ = require('lodash');
 const s3Config = require('../config/s3');
 
 const s3 = new aws.S3({
@@ -8,8 +9,39 @@ const s3 = new aws.S3({
 });
 
 var S3_BUCKET = 'apidevelopment';
+
+var getUrl = (key) => {
+  return "https://"+S3_BUCKET+".s3.amazonaws.com/"+key;
+}
+
+module.exports.getPublicUrl = (fileName, callback) => {
+  var key = s3Config.S3_FOLDER+fileName;
+  var options = {
+    Bucket: S3_BUCKET,
+    Key: key,
+    Expires: 3600
+  }
+  s3.getSignedUrl('getObject', options, (error, url) => {
+    callback({error: error, url: url});
+  });
+}
+
+module.exports.getObjects = (callback) => {
+  var params = {
+    Bucket: S3_BUCKET,
+    Prefix: s3Config.S3_FOLDER
+  };
+  s3.listObjects(params,(err, objects) => {
+    if(!err) {
+      var images = _.filter(objects.Contents, (file) => {
+        return file.Size > 0;
+      });
+    }
+    callback(err, images);
+  });
+}
 module.exports.uploadFile = (request, response, file, callback) => {
-  var key = "sq/companies/uploads/"+file.filename;
+  var key = s3Config.S3_FOLDER+file.filename;
   var options = {
     Bucket: S3_BUCKET,
     Key: key,

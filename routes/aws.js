@@ -9,20 +9,32 @@ const storage = multer.diskStorage({
   },
   filename: (request, file, callback) => {
     let timeStamp = new Date().getTime();
-    var file_name = file.originalname.replace(/\s/g,'_');
+    var file_name = file.originalname.replace(/\s/g, '_');
     callback(null, `${file.fieldname}-${timeStamp}-${file_name}`)
   }
 })
- 
+
 const upload = multer({ storage: storage });
 
 router.get('/', (request, response, next) => {
   response.render("aws/index")
 })
 
+router.get('/:objects', (request, response, next) => {
+  awsS3.getObjects((error, objects) => {
+    response.json(objects)
+  })
+})
+
+router.get('/:fileName', (request, response, next) => {
+  awsS3.getPublicUrl('filename', (data) => {
+    response.json(data)
+  })
+})
+
 router.post('/', upload.single('file'), (request, response, next) => {
   awsS3.uploadFile(request, response, request.file, (attachement, error) => {
-    if(error){
+    if (error) {
       console.log(error)
       response.json(error)
     } else {
@@ -30,4 +42,5 @@ router.post('/', upload.single('file'), (request, response, next) => {
     }
   });
 });
+
 module.exports = router;
