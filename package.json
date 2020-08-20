@@ -23,7 +23,7 @@
   "homepage": "https://github.com/vimstech/s3.upload.aws#readme",
   "dependencies": {
     "aws-sdk": "^2.496.0",
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "consign": "^0.1.6",
     "cookie-parser": "^1.4.4",
